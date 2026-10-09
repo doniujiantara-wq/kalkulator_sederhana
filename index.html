@@ -2,214 +2,525 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Web</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEONIX Calculator</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+:root {
+    --bg: #061510;
+    --panel: #0b2118;
+    --key: #15372a;
+    --green: #35f59a;
+    --lime: #b5ff58;
+    --text: #eafff3;
+    --muted: #8eb8a2;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #141e30, #243b55);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .kalkulator {
-            width: 320px;
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px #0005;
-        }
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at top, #164c31, transparent 50%),
+        var(--bg);
+}
 
-        h2 {
-            color: white;
-            text-align: center;
-            margin-top: 0;
-        }
+body.light {
+    --bg: #effcf4;
+    --panel: #ffffff;
+    --key: #e0f5e8;
+    --text: #102d20;
+    --muted: #557a66;
+}
 
-        #layar {
-            width: 100%;
-            height: 75px;
-            background: #0f172a;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            padding: 15px;
-            font-size: 30px;
-            text-align: right;
-        }
+.container {
+    width: 100%;
+    max-width: 390px;
+    padding: 22px;
+    background: var(--panel);
+    border: 1px solid #35f59a44;
+    border-radius: 25px;
+    box-shadow: 0 0 35px #35f59a22;
+}
 
-        .tombol {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
 
-        button {
-            height: 55px;
-            border: none;
-            border-radius: 10px;
-            font-size: 20px;
-            cursor: pointer;
-            background: #334155;
-            color: white;
-        }
+.header h1 {
+    margin: 0;
+    font-size: 25px;
+}
 
-        button:hover {
-            filter: brightness(1.2);
-        }
+.header span {
+    color: var(--green);
+}
 
-        .operator {
-            background: #2563eb;
-        }
+.header button {
+    padding: 9px 12px;
+    border: 1px solid #35f59a44;
+    border-radius: 10px;
+    background: var(--key);
+    color: var(--text);
+    cursor: pointer;
+}
 
-        .hapus {
-            background: #dc2626;
-        }
+.display {
+    padding: 20px 15px;
+    margin-bottom: 15px;
+    text-align: right;
+    border-radius: 15px;
+    background: #061b13;
+    border: 1px solid #35f59a33;
+    overflow-wrap: anywhere;
+}
 
-        .hasil {
-            background: #16a34a;
-            grid-column: span 2;
-        }
+body.light .display {
+    background: #e4f9eb;
+}
 
-        .nol {
-            grid-column: span 2;
-        }
-    </style>
+#expression {
+    min-height: 22px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+#result {
+    margin-top: 12px;
+    font-size: 42px;
+    font-weight: bold;
+}
+
+.mode {
+    width: 100%;
+    padding: 9px;
+    margin-bottom: 12px;
+    color: var(--text);
+    background: var(--key);
+    border: 1px solid #35f59a44;
+    border-radius: 9px;
+}
+
+.keys {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.key {
+    min-height: 48px;
+    border: 1px solid #35f59a15;
+    border-radius: 12px;
+    background: var(--key);
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+    transition: .15s;
+}
+
+.key:hover {
+    filter: brightness(1.25);
+    transform: translateY(-2px);
+}
+
+.function {
+    color: var(--green);
+}
+
+.operator {
+    background: #17633e;
+    color: white;
+}
+
+.danger {
+    background: #bd294d;
+    color: white;
+}
+
+.equal {
+    background: linear-gradient(120deg, var(--green), var(--lime));
+    color: #062316;
+    font-weight: bold;
+}
+
+.history {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #35f59a33;
+}
+
+.history h3 {
+    margin: 0 0 10px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 7px;
+    background: var(--key);
+    border-radius: 9px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.history-item span:last-child {
+    color: var(--green);
+    font-weight: bold;
+}
+
+.clear-history {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #35f59a33;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.footer {
+    margin-top: 18px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 11px;
+}
+</style>
 </head>
 
 <body>
-    <div class="kalkulator">
-        <h2>Kalkulator</h2>
+<div class="container">
 
-        <input id="layar" type="text"
-               value="0" readonly
-               aria-label="Layar kalkulator">
-
-        <div class="tombol">
-            <button class="hapus" onclick="bersihkan()">C</button>
-            <button onclick="hapusSatu()">⌫</button>
-            <button class="operator" onclick="pilihOperator('/')">÷</button>
-            <button class="operator" onclick="pilihOperator('*')">×</button>
-
-            <button onclick="masukAngka('7')">7</button>
-            <button onclick="masukAngka('8')">8</button>
-            <button onclick="masukAngka('9')">9</button>
-            <button class="operator" onclick="pilihOperator('-')">−</button>
-
-            <button onclick="masukAngka('4')">4</button>
-            <button onclick="masukAngka('5')">5</button>
-            <button onclick="masukAngka('6')">6</button>
-            <button class="operator" onclick="pilihOperator('+')">+</button>
-
-            <button onclick="masukAngka('1')">1</button>
-            <button onclick="masukAngka('2')">2</button>
-            <button onclick="masukAngka('3')">3</button>
-            <button onclick="masukAngka('.')">.</button>
-
-            <button class="nol" onclick="masukAngka('0')">0</button>
-            <button class="hasil" onclick="hitung()">=</button>
-        </div>
+    <div class="header">
+        <h1>NEON<span>IX</span></h1>
+        <button onclick="toggleTheme()">☼ Tema</button>
     </div>
 
-    <script>
-        const layar = document.getElementById("layar");
+    <div class="display">
+        <div id="expression">SYSTEM READY</div>
+        <div id="result">0</div>
+    </div>
 
-        let angkaPertama = null;
-        let operator = null;
-        let angkaBaru = true;
+    <select class="mode" id="angleMode">
+        <option value="DEG">DEG - Derajat</option>
+        <option value="RAD">RAD - Radian</option>
+    </select>
 
-        function masukAngka(angka) {
-            if (angkaBaru) {
-                layar.value = angka === "." ? "0." : angka;
-                angkaBaru = false;
+    <div class="keys">
+        <button class="key danger" onclick="clearAll()">AC</button>
+        <button class="key function" onclick="deleteOne()">⌫</button>
+        <button class="key function" onclick="percent()">%</button>
+        <button class="key function" onclick="changeSign()">±</button>
+        <button class="key operator" onclick="chooseOperator('/')">÷</button>
+
+        <button class="key function" onclick="scientific('sin')">sin</button>
+        <button class="key function" onclick="scientific('cos')">cos</button>
+        <button class="key function" onclick="scientific('tan')">tan</button>
+        <button class="key function" onclick="scientific('sqrt')">√x</button>
+        <button class="key operator" onclick="chooseOperator('*')">×</button>
+
+        <button class="key" onclick="inputNumber('7')">7</button>
+        <button class="key" onclick="inputNumber('8')">8</button>
+        <button class="key" onclick="inputNumber('9')">9</button>
+        <button class="key function" onclick="scientific('square')">x²</button>
+        <button class="key operator" onclick="chooseOperator('-')">−</button>
+
+        <button class="key" onclick="inputNumber('4')">4</button>
+        <button class="key" onclick="inputNumber('5')">5</button>
+        <button class="key" onclick="inputNumber('6')">6</button>
+        <button class="key function" onclick="scientific('reciprocal')">1/x</button>
+        <button class="key operator" onclick="chooseOperator('+')">+</button>
+
+        <button class="key" onclick="inputNumber('1')">1</button>
+        <button class="key" onclick="inputNumber('2')">2</button>
+        <button class="key" onclick="inputNumber('3')">3</button>
+        <button class="key function" onclick="constant('pi')">π</button>
+        <button class="key function" onclick="constant('e')">e</button>
+
+        <button class="key" onclick="inputNumber('0')">0</button>
+        <button class="key" onclick="inputNumber('.')">.</button>
+        <button class="key equal" style="grid-column:span 3"
+                onclick="calculate()">=</button>
+    </div>
+
+    <div class="history">
+        <h3>◷ Riwayat Perhitungan</h3>
+        <div id="historyList">Belum ada perhitungan.</div>
+        <button class="clear-history" onclick="clearHistory()">
+            Hapus Riwayat
+        </button>
+    </div>
+
+    <div class="footer">
+        NEONIX © 2026 · HTML · CSS · JavaScript
+    </div>
+</div>
+
+<script>
+const resultEl = document.getElementById("result");
+const expressionEl = document.getElementById("expression");
+const historyEl = document.getElementById("historyList");
+
+let current = "0";
+let first = null;
+let operator = null;
+let waiting = false;
+let history = [];
+
+const symbols = {
+    "+": "+",
+    "-": "−",
+    "*": "×",
+    "/": "÷"
+};
+
+function format(number) {
+    if (!Number.isFinite(number)) return "Error";
+    return String(Number(number.toPrecision(12)));
+}
+
+function render() {
+    resultEl.textContent = current;
+    expressionEl.textContent =
+        expressionEl.textContent || "SYSTEM READY";
+}
+
+function inputNumber(number) {
+    if (current === "Error") clearAll();
+
+    if (waiting) {
+        current = number === "." ? "0." : number;
+        waiting = false;
+    } else if (number === ".") {
+        if (!current.includes(".")) current += ".";
+    } else if (current === "0") {
+        current = number;
+    } else if (current.length < 16) {
+        current += number;
+    }
+
+    render();
+}
+
+function chooseOperator(op) {
+    if (current === "Error") return;
+
+    if (operator && !waiting) calculate(false);
+
+    first = Number(current);
+    operator = op;
+    waiting = true;
+
+    expressionEl.textContent =
+        format(first) + " " + symbols[op];
+
+    render();
+}
+
+function calculate(save = true) {
+    if (operator === null || first === null || waiting) return;
+
+    const a = first;
+    const b = Number(current);
+    let answer;
+
+    switch (operator) {
+        case "+":
+            answer = a + b;
+            break;
+        case "-":
+            answer = a - b;
+            break;
+        case "*":
+            answer = a * b;
+            break;
+        case "/":
+            if (b === 0) {
+                current = "Error";
+                expressionEl.textContent =
+                    "Tidak bisa membagi dengan nol";
+                first = null;
+                operator = null;
+                waiting = true;
+                render();
                 return;
             }
+            answer = a / b;
+            break;
+    }
 
-            if (angka === "." && layar.value.includes(".")) {
+    const calculation =
+        `${format(a)} ${symbols[operator]} ${format(b)}`;
+
+    current = format(answer);
+    expressionEl.textContent = calculation + " =";
+
+    if (save) addHistory(calculation, current);
+
+    first = null;
+    operator = null;
+    waiting = true;
+    render();
+}
+
+function clearAll() {
+    current = "0";
+    first = null;
+    operator = null;
+    waiting = false;
+    expressionEl.textContent = "SYSTEM READY";
+    render();
+}
+
+function deleteOne() {
+    if (waiting || current === "Error") {
+        current = "0";
+        waiting = false;
+    } else {
+        current = current.length > 1
+            ? current.slice(0, -1)
+            : "0";
+    }
+    render();
+}
+
+function percent() {
+    if (current !== "Error") {
+        current = format(Number(current) / 100);
+        render();
+    }
+}
+
+function changeSign() {
+    if (current !== "Error") {
+        current = format(-Number(current));
+        render();
+    }
+}
+
+function scientific(fn) {
+    const x = Number(current);
+    const factor =
+        document.getElementById("angleMode").value === "DEG"
+        ? Math.PI / 180 : 1;
+
+    let answer;
+
+    switch (fn) {
+        case "sin": answer = Math.sin(x * factor); break;
+        case "cos": answer = Math.cos(x * factor); break;
+        case "tan": answer = Math.tan(x * factor); break;
+        case "sqrt":
+            if (x < 0) {
+                current = "Error";
+                expressionEl.textContent =
+                    "Akar bilangan negatif tidak real";
+                render();
                 return;
             }
-
-            if (layar.value === "0" && angka !== ".") {
-                layar.value = angka;
-            } else {
-                layar.value += angka;
+            answer = Math.sqrt(x);
+            break;
+        case "square": answer = x * x; break;
+        case "reciprocal":
+            if (x === 0) {
+                current = "Error";
+                expressionEl.textContent = "Tidak bisa membagi nol";
+                render();
+                return;
             }
-        }
+            answer = 1 / x;
+            break;
+    }
 
-        function pilihOperator(op) {
-            if (operator !== null && !angkaBaru) {
-                hitung();
-            }
+    expressionEl.textContent = fn + "(" + current + ") =";
+    current = format(answer);
+    addHistory(expressionEl.textContent.replace(" =", ""), current);
+    waiting = true;
+    render();
+}
 
-            angkaPertama = Number(layar.value);
-            operator = op;
-            angkaBaru = true;
-        }
+function constant(name) {
+    current = format(name === "pi" ? Math.PI : Math.E);
+    expressionEl.textContent =
+        name === "pi" ? "Konstanta π" : "Konstanta e";
+    waiting = true;
+    render();
+}
 
-        function hitung() {
-            if (operator === null || angkaBaru) return;
+function addHistory(calculation, answer) {
+    history.unshift({calculation, answer});
+    history = history.slice(0, 20);
+    renderHistory();
+}
 
-            const angkaKedua = Number(layar.value);
-            let hasil;
+function renderHistory() {
+    historyEl.replaceChildren();
 
-            switch (operator) {
-                case "+":
-                    hasil = angkaPertama + angkaKedua;
-                    break;
-                case "-":
-                    hasil = angkaPertama - angkaKedua;
-                    break;
-                case "*":
-                    hasil = angkaPertama * angkaKedua;
-                    break;
-                case "/":
-                    if (angkaKedua === 0) {
-                        layar.value = "Tidak bisa";
-                        operator = null;
-                        angkaPertama = null;
-                        angkaBaru = true;
-                        return;
-                    }
-                    hasil = angkaPertama / angkaKedua;
-                    break;
-            }
+    if (history.length === 0) {
+        historyEl.textContent = "Belum ada perhitungan.";
+        return;
+    }
 
-            layar.value = String(
-                Number(hasil.toPrecision(12))
-            );
+    history.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "history-item";
 
+        const calculation = document.createElement("span");
+        calculation.textContent = item.calculation;
+
+        const answer = document.createElement("span");
+        answer.textContent = "= " + item.answer;
+
+        row.append(calculation, answer);
+
+        row.addEventListener("click", () => {
+            current = item.answer;
+            first = null;
             operator = null;
-            angkaPertama = null;
-            angkaBaru = true;
-        }
+            waiting = true;
+            expressionEl.textContent = item.calculation + " =";
+            render();
+        });
 
-        function bersihkan() {
-            layar.value = "0";
-            angkaPertama = null;
-            operator = null;
-            angkaBaru = true;
-        }
+        historyEl.appendChild(row);
+    });
+}
 
-        function hapusSatu() {
-            if (angkaBaru) return;
+function clearHistory() {
+    history = [];
+    renderHistory();
+}
 
-            layar.value = layar.value.slice(0, -1);
+function toggleTheme() {
+    document.body.classList.toggle("light");
+}
 
-            if (layar.value === "" || layar.value === "-") {
-                layar.value = "0";
-                angkaBaru = true;
-            }
-        }
-    </script>
+// Dukungan keyboard
+document.addEventListener("keydown", event => {
+    if (/^[0-9.]$/.test(event.key)) inputNumber(event.key);
+    else if (["+", "-", "*", "/"].includes(event.key))
+        chooseOperator(event.key);
+    else if (event.key === "Enter" || event.key === "=") {
+        event.preventDefault();
+        calculate();
+    }
+    else if (event.key === "Backspace") deleteOne();
+    else if (event.key === "Escape") clearAll();
+});
+</script>
 </body>
 </html>
