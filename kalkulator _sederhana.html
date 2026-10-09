@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Web</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .kalkulator {
+            width: 320px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px #0005;
+        }
+
+        h2 {
+            color: white;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        #layar {
+            width: 100%;
+            height: 75px;
+            background: #0f172a;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            font-size: 30px;
+            text-align: right;
+        }
+
+        .tombol {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            height: 55px;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            background: #334155;
+            color: white;
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+        }
+
+        .operator {
+            background: #2563eb;
+        }
+
+        .hapus {
+            background: #dc2626;
+        }
+
+        .hasil {
+            background: #16a34a;
+            grid-column: span 2;
+        }
+
+        .nol {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="kalkulator">
+        <h2>Kalkulator</h2>
+
+        <input id="layar" type="text"
+               value="0" readonly
+               aria-label="Layar kalkulator">
+
+        <div class="tombol">
+            <button class="hapus" onclick="bersihkan()">C</button>
+            <button onclick="hapusSatu()">⌫</button>
+            <button class="operator" onclick="pilihOperator('/')">÷</button>
+            <button class="operator" onclick="pilihOperator('*')">×</button>
+
+            <button onclick="masukAngka('7')">7</button>
+            <button onclick="masukAngka('8')">8</button>
+            <button onclick="masukAngka('9')">9</button>
+            <button class="operator" onclick="pilihOperator('-')">−</button>
+
+            <button onclick="masukAngka('4')">4</button>
+            <button onclick="masukAngka('5')">5</button>
+            <button onclick="masukAngka('6')">6</button>
+            <button class="operator" onclick="pilihOperator('+')">+</button>
+
+            <button onclick="masukAngka('1')">1</button>
+            <button onclick="masukAngka('2')">2</button>
+            <button onclick="masukAngka('3')">3</button>
+            <button onclick="masukAngka('.')">.</button>
+
+            <button class="nol" onclick="masukAngka('0')">0</button>
+            <button class="hasil" onclick="hitung()">=</button>
+        </div>
+    </div>
+
+    <script>
+        const layar = document.getElementById("layar");
+
+        let angkaPertama = null;
+        let operator = null;
+        let angkaBaru = true;
+
+        function masukAngka(angka) {
+            if (angkaBaru) {
+                layar.value = angka === "." ? "0." : angka;
+                angkaBaru = false;
+                return;
+            }
+
+            if (angka === "." && layar.value.includes(".")) {
+                return;
+            }
+
+            if (layar.value === "0" && angka !== ".") {
+                layar.value = angka;
+            } else {
+                layar.value += angka;
+            }
+        }
+
+        function pilihOperator(op) {
+            if (operator !== null && !angkaBaru) {
+                hitung();
+            }
+
+            angkaPertama = Number(layar.value);
+            operator = op;
+            angkaBaru = true;
+        }
+
+        function hitung() {
+            if (operator === null || angkaBaru) return;
+
+            const angkaKedua = Number(layar.value);
+            let hasil;
+
+            switch (operator) {
+                case "+":
+                    hasil = angkaPertama + angkaKedua;
+                    break;
+                case "-":
+                    hasil = angkaPertama - angkaKedua;
+                    break;
+                case "*":
+                    hasil = angkaPertama * angkaKedua;
+                    break;
+                case "/":
+                    if (angkaKedua === 0) {
+                        layar.value = "Tidak bisa";
+                        operator = null;
+                        angkaPertama = null;
+                        angkaBaru = true;
+                        return;
+                    }
+                    hasil = angkaPertama / angkaKedua;
+                    break;
+            }
+
+            layar.value = String(
+                Number(hasil.toPrecision(12))
+            );
+
+            operator = null;
+            angkaPertama = null;
+            angkaBaru = true;
+        }
+
+        function bersihkan() {
+            layar.value = "0";
+            angkaPertama = null;
+            operator = null;
+            angkaBaru = true;
+        }
+
+        function hapusSatu() {
+            if (angkaBaru) return;
+
+            layar.value = layar.value.slice(0, -1);
+
+            if (layar.value === "" || layar.value === "-") {
+                layar.value = "0";
+                angkaBaru = true;
+            }
+        }
+    </script>
+</body>
+</html>
